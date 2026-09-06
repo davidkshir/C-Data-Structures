@@ -3,7 +3,7 @@ project(C_Data_Structures C)
 
 set(CMAKE_C_STANDARD 17)
 
-add_library(DataStructures
+add_executable(DataStructures
         src/HashTable.c
 )
 

@@ -1,8 +1,5 @@
-//
-// Created by david on 9/6/2026.
-//
-
 #ifndef C_DATA_STRUCTURES_HASHTABLE_H
 #define C_DATA_STRUCTURES_HASHTABLE_H
+#include <stdint.h>
 
 #endif //C_DATA_STRUCTURES_HASHTABLE_H
