@@ -14,3 +14,7 @@ static uint64_t hashFNV1a(const char *item){
     }
     return hash;
 }
+
+static size_t hashToIndex(const uint64_t hash, const size_t numBuckets) {
+    return hash % numBuckets;
+}
