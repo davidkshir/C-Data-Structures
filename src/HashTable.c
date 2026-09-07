@@ -65,6 +65,39 @@ HashTableStatus createHashTable(const size_t num_buckets, HashTable** table) {
     return HASH_TABLE_SUCCESS;
 }
 
+HashTableStatus searchHashTable(const HashTable* hash_table, const char* key, const void** output) {
+    if (hash_table == NULL) {
+        return HASH_TABLE_INVALID_ARGUMENT;
+    }
+    if (key == NULL) {
+        return HASH_TABLE_INVALID_KEY;
+    }
+    if (output == NULL) {
+        return HASH_TABLE_INVALID_OUTPUT;
+    }
+    if (*output != NULL) {
+        return HASH_TABLE_INVALID_OUTPUT;
+    }
+
+    const uint64_t hash = hashFNV1a(key);
+    const size_t index = hashToIndex(hash, hash_table->num_buckets);
+
+    const Entry* cur = hash_table->buckets[index];
+    while (cur != NULL) {
+        if (cur->cached_hash != hash) {
+            cur = cur->next;
+            continue;
+        }
+        if (strcmp(key, cur->key) == 0) {
+            *output = cur->value;
+            return HASH_TABLE_SUCCESS;
+
+        }
+        cur = cur->next;
+    }
+    return HASH_TABLE_KEY_NOT_FOUND;
+}
+
 static HashTableStatus resizeHashTable(HashTable* hash_table) {
     if (hash_table == NULL) {
         return HASH_TABLE_INVALID_ARGUMENT;
@@ -115,7 +148,15 @@ HashTableStatus hashTableInsertion(HashTable* hash_table, const char* key, const
 
     const uint64_t hash = hashFNV1a(key);
 
-    // check if the key is a duplicate first
+    const void* output = NULL;
+    const HashTableStatus search_status = searchHashTable(hash_table, key, &output);
+    if (search_status == HASH_TABLE_SUCCESS) {
+        return HASH_TABLE_DUPLICATE_KEY;
+    }
+    if (search_status != HASH_TABLE_KEY_NOT_FOUND) {
+        return search_status;
+    }
+
 
     if ((float) (hash_table->size + 1) / (float) hash_table->num_buckets >= 0.75f) {
         const HashTableStatus status = resizeHashTable(hash_table);
@@ -150,37 +191,4 @@ HashTableStatus hashTableInsertion(HashTable* hash_table, const char* key, const
     hash_table->size += 1;
 
     return HASH_TABLE_SUCCESS;
-}
-
-HashTableStatus searchHashTable(const HashTable* hash_table, const char* key, const void** output) {
-    if (hash_table == NULL) {
-        return HASH_TABLE_INVALID_ARGUMENT;
-    }
-    if (key == NULL) {
-        return HASH_TABLE_INVALID_KEY;
-    }
-    if (output == NULL) {
-        return HASH_TABLE_INVALID_OUTPUT;
-    }
-    if (*output != NULL) {
-        return HASH_TABLE_INVALID_OUTPUT;
-    }
-
-    const uint64_t hash = hashFNV1a(key);
-    const size_t index = hashToIndex(hash, hash_table->num_buckets);
-
-    const Entry* cur = hash_table->buckets[index];
-    while (cur != NULL) {
-        if (cur->cached_hash != hash) {
-            cur = cur->next;
-            continue;
-        }
-        if (strcmp(key, cur->key) == 0) {
-            *output = cur->value;
-            return HASH_TABLE_SUCCESS;
-
-        }
-        cur = cur->next;
-    }
-    return HASH_TABLE_KEY_NOT_FOUND;
 }
