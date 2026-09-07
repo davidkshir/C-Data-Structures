@@ -84,11 +84,7 @@ HashTableStatus searchHashTable(const HashTable* hash_table, const char* key, co
 
     const Entry* cur = hash_table->buckets[index];
     while (cur != NULL) {
-        if (cur->cached_hash != hash) {
-            cur = cur->next;
-            continue;
-        }
-        if (strcmp(key, cur->key) == 0) {
+        if (cur->cached_hash == hash && strcmp(key, cur->key) == 0) {
             *output = cur->value;
             return HASH_TABLE_SUCCESS;
 
@@ -188,7 +184,41 @@ HashTableStatus hashTableInsertion(HashTable* hash_table, const char* key, const
     entry->value_size = value_size;
     entry->next = hash_table->buckets[index];
     hash_table->buckets[index] = entry;
-    hash_table->size += 1;
+    hash_table->size++;
 
     return HASH_TABLE_SUCCESS;
+}
+
+HashTableStatus hashTableDeletion(HashTable* hash_table, const char* key) {
+    if (hash_table == NULL) {
+        return HASH_TABLE_INVALID_ARGUMENT;
+    }
+    if (key == NULL) {
+        return HASH_TABLE_INVALID_KEY;
+    }
+
+    const uint64_t hash = hashFNV1a(key);
+    const size_t index = hashToIndex(hash, hash_table->num_buckets);
+
+    Entry* prev = NULL;
+    Entry* cur = hash_table->buckets[index];
+
+    while (cur != NULL) {
+        if (cur->cached_hash == hash && strcmp(key, cur->key) == 0) {
+            if (prev == NULL) {
+                hash_table->buckets[index] = cur->next;
+            }
+            else {
+                prev->next = cur->next;
+            }
+            free(cur->key);
+            free(cur->value);
+            free(cur);
+            hash_table->size--;
+            return HASH_TABLE_SUCCESS;
+        }
+        prev = cur;
+        cur = cur->next;
+    }
+    return HASH_TABLE_KEY_NOT_FOUND;
 }

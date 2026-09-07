@@ -19,7 +19,8 @@ typedef enum {
 
 typedef struct HashTable HashTable;
 HashTableStatus createHashTable(size_t num_buckets, HashTable** table);
-HashTableStatus hashTableInsertion(HashTable* hash_table, const char* key, const void* value, size_t value_size);
 HashTableStatus searchHashTable(const HashTable* hash_table, const char* key, const void** output);
+HashTableStatus hashTableInsertion(HashTable* hash_table, const char* key, const void* value, size_t value_size);
+HashTableStatus hashTableDeletion(HashTable* hash_table, const char* key);
 
 #endif //C_DATA_STRUCTURES_HASHTABLE_H
