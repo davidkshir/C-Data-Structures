@@ -75,9 +75,6 @@ HashTableStatus searchHashTable(const HashTable* hash_table, const char* key, co
     if (output == NULL) {
         return HASH_TABLE_INVALID_OUTPUT;
     }
-    if (*output != NULL) {
-        return HASH_TABLE_INVALID_OUTPUT;
-    }
 
     const uint64_t hash = hashFNV1a(key);
     const size_t index = hashToIndex(hash, hash_table->num_buckets);
@@ -152,7 +149,6 @@ HashTableStatus hashTableInsertion(HashTable* hash_table, const char* key, const
     if (search_status != HASH_TABLE_KEY_NOT_FOUND) {
         return search_status;
     }
-
 
     if ((float) (hash_table->size + 1) / (float) hash_table->num_buckets >= 0.75f) {
         const HashTableStatus status = resizeHashTable(hash_table);
