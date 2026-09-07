@@ -101,7 +101,7 @@ static HashTableStatus resizeHashTable(HashTable* hash_table) {
 
 HashTableStatus hashTableInsertion(HashTable* hash_table, const char* key, const void* value, const size_t value_size) {
     if (hash_table == NULL) {
-        return HASH_TABLE_INVALID_OUTPUT;
+        return HASH_TABLE_INVALID_ARGUMENT;
     }
     if (key == NULL) {
         return HASH_TABLE_INVALID_KEY;
@@ -150,4 +150,37 @@ HashTableStatus hashTableInsertion(HashTable* hash_table, const char* key, const
     hash_table->size += 1;
 
     return HASH_TABLE_SUCCESS;
+}
+
+HashTableStatus searchHashTable(const HashTable* hash_table, const char* key, const void** output) {
+    if (hash_table == NULL) {
+        return HASH_TABLE_INVALID_ARGUMENT;
+    }
+    if (key == NULL) {
+        return HASH_TABLE_INVALID_KEY;
+    }
+    if (output == NULL) {
+        return HASH_TABLE_INVALID_OUTPUT;
+    }
+    if (*output != NULL) {
+        return HASH_TABLE_INVALID_OUTPUT;
+    }
+
+    const uint64_t hash = hashFNV1a(key);
+    const size_t index = hashToIndex(hash, hash_table->num_buckets);
+
+    const Entry* cur = hash_table->buckets[index];
+    while (cur != NULL) {
+        if (cur->cached_hash != hash) {
+            cur = cur->next;
+            continue;
+        }
+        if (strcmp(key, cur->key) == 0) {
+            *output = cur->value;
+            return HASH_TABLE_SUCCESS;
+
+        }
+        cur = cur->next;
+    }
+    return HASH_TABLE_KEY_NOT_FOUND;
 }
