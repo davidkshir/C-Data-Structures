@@ -1,7 +1,7 @@
 # C Data Structures
 
 A collection of data structures implemented from scratch in C to explore
-manual memory management, pointers, generic data storage, and low-level
+manual memory management, pointers, data storage, and low-level
 data structure design.
 
 ## Hash Table
@@ -19,7 +19,6 @@ values.
 - Cached hashes for faster collision-chain searches
 - Duplicate-key detection
 - Explicit error handling through `HashTableStatus`
-- Opaque `HashTable` type
 
 ### Example
 
@@ -53,7 +52,7 @@ The table automatically doubles its bucket count when an insertion would
 reach a load factor of 0.75. Existing entries are redistributed using their
 cached hashes without reallocating their keys or values.
 
-## Complexity 
+### Complexity 
 
 With a well-distributed hash function and reasonable load factor:
 
@@ -73,3 +72,58 @@ The worst case occurs when many keys collide into the same bucket.
 The table owns separate allocations for each entry's key and value. Deletion
 releases these allocations, while `destroyHashTable()` releases all remaining
 entries, the bucket array, and the table itself.
+
+## Singly Linked List
+
+An integer singly linked list with an opaque public interface and privately managed nodes.
+
+### Features
+
+- Front and back insertion
+- Front and back removal
+- Front and back peek operations
+- Explicit error handling through `SLLStatus`
+- Copies peeked values into caller-provided memory
+
+### Example
+
+```c
+SinglyLinkedList* list = NULL;
+createList(&list);
+
+pushBack(list, 10);
+pushBack(list, 20);
+pushFront(list, 5);
+
+int value;
+
+if (peekFront(list, &value) == SLL_SUCCESS) {
+    printf("%d\n", value);
+}
+
+popFront(list);
+destroyList(&list);
+```
+
+Peek operations copy the stored integer into a caller-provided output variable,
+preventing internal node memory from being exposed.
+
+### Implementation
+
+Each node stores an integer and a pointer to the next node in the list.
+The list maintains a pointer to its first node, while node structures remain
+private to the implementation.
+
+Front operations access the first node directly, while back operations traverse
+the list to locate its final node.
+
+### Complexity
+
+| Operation | Time |
+|-----------|------|
+| Push Front | O(1) |
+| Pop Front | O(1) |
+| Peek Front | O(1) |
+| Push Back | O(n) |
+| Pop Back | O(n) |
+| Peek Back | O(n) |
