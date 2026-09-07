@@ -22,5 +22,6 @@ HashTableStatus createHashTable(size_t num_buckets, HashTable** table);
 HashTableStatus searchHashTable(const HashTable* hash_table, const char* key, const void** output);
 HashTableStatus hashTableInsertion(HashTable* hash_table, const char* key, const void* value, size_t value_size);
 HashTableStatus hashTableDeletion(HashTable* hash_table, const char* key);
+HashTableStatus destroyHashTable(HashTable** hash_table);
 
 #endif //C_DATA_STRUCTURES_HASHTABLE_H

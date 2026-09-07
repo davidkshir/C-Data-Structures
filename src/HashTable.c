@@ -222,3 +222,31 @@ HashTableStatus hashTableDeletion(HashTable* hash_table, const char* key) {
     }
     return HASH_TABLE_KEY_NOT_FOUND;
 }
+
+HashTableStatus destroyHashTable(HashTable** hash_table) {
+    if (hash_table == NULL) {
+        return HASH_TABLE_INVALID_ARGUMENT;
+    }
+    if (*hash_table == NULL) {
+        return HASH_TABLE_INVALID_ARGUMENT;
+    }
+
+    for (size_t i = 0; i < (*hash_table)->num_buckets; i++) {
+
+        Entry* cur = (*hash_table)->buckets[i];
+        Entry* next = NULL;
+
+        while (cur != NULL) {
+            next = cur->next;
+            free(cur->value);
+            free(cur->key);
+            free(cur);
+            cur = next;
+        }
+    }
+
+    free((*hash_table)->buckets);
+    free(*hash_table);
+    *hash_table = NULL;
+    return HASH_TABLE_SUCCESS;
+}
