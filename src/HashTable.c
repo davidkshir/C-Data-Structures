@@ -1,11 +1,13 @@
 #include "HashTable.h"
 #include<stdint.h>
 #include<stdlib.h>
+#include <string.h>
 
 
 typedef struct Entry {
-    char *key ;
+    char* key ;
     void* value;
+    size_t value_size;
     uint64_t cached_hash;
     struct Entry *next;
 } Entry;
@@ -59,6 +61,93 @@ HashTableStatus createHashTable(const size_t num_buckets, HashTable** table) {
     hash_table->num_buckets = num_buckets;
     hash_table->size = 0;
     *table = hash_table;
+
+    return HASH_TABLE_SUCCESS;
+}
+
+static HashTableStatus resizeHashTable(HashTable* hash_table) {
+    if (hash_table == NULL) {
+        return HASH_TABLE_INVALID_ARGUMENT;
+    }
+
+    if (hash_table->num_buckets > SIZE_MAX / 2) {
+        return HASH_TABLE_CAPACITY_OVERFLOW;
+    }
+    const size_t new_capacity = 2 * hash_table->num_buckets;
+    Entry** buckets = calloc(new_capacity, sizeof(Entry*));
+    if (buckets == NULL) {
+        return HASH_TABLE_ALLOCATION_FAILED;
+    }
+
+    for (size_t i = 0; i < hash_table->num_buckets ; i++) {
+        if (hash_table->buckets[i] == NULL) {
+            continue;
+        }
+        Entry* cur = hash_table->buckets[i];
+        while (cur != NULL){
+            Entry* tmp_ptr = cur->next;
+            const size_t new_index = hashToIndex(cur->cached_hash, new_capacity);
+            cur->next = buckets[new_index];
+            buckets[new_index] = cur;
+            cur = tmp_ptr;
+        }
+    }
+
+    free(hash_table->buckets);
+    hash_table->buckets = buckets;
+    hash_table->num_buckets = new_capacity;
+    return HASH_TABLE_SUCCESS;
+}
+
+HashTableStatus hashTableInsertion(HashTable* hash_table, const char* key, const void* value, const size_t value_size) {
+    if (hash_table == NULL) {
+        return HASH_TABLE_INVALID_OUTPUT;
+    }
+    if (key == NULL) {
+        return HASH_TABLE_INVALID_KEY;
+    }
+    if (value == NULL) {
+        return HASH_TABLE_INVALID_VALUE;
+    }
+    if (value_size == 0) {
+        return HASH_TABLE_INVALID_VALUE_SIZE;
+    }
+
+    const uint64_t hash = hashFNV1a(key);
+
+    // check if the key is a duplicate first
+
+    if ((float) (hash_table->size + 1) / (float) hash_table->num_buckets >= 0.75f) {
+        const HashTableStatus status = resizeHashTable(hash_table);
+        if (status != HASH_TABLE_SUCCESS) {
+            return status;
+        }
+    }
+
+    const size_t index = hashToIndex(hash, hash_table->num_buckets);
+    const size_t key_len = strlen(key) + 1; // +1 to include '\0'
+
+    Entry* entry = malloc(sizeof(Entry));
+    char* key_copy = malloc(key_len);
+    void* value_copy = malloc(value_size);
+
+    if (entry == NULL || key_copy == NULL || value_copy == NULL){
+        free(entry);
+        free(key_copy);
+        free(value_copy);
+        return HASH_TABLE_ALLOCATION_FAILED;
+    }
+
+    memcpy(key_copy, key, key_len);
+    memcpy(value_copy, value, value_size);
+
+    entry->key = key_copy;
+    entry->value = value_copy;
+    entry->cached_hash = hash;
+    entry->value_size = value_size;
+    entry->next = hash_table->buckets[index];
+    hash_table->buckets[index] = entry;
+    hash_table->size += 1;
 
     return HASH_TABLE_SUCCESS;
 }
