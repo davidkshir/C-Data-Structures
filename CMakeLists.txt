@@ -8,6 +8,8 @@ add_executable(DataStructures
         src/SLL.c
         src/DLL.c
         src/Stack.c
+        src/DyanmicArray.c
+        include/DynamicArray.h
 )
 
 include_directories(C-Data-Structures PUBLIC include)
