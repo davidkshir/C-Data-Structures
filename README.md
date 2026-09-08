@@ -179,3 +179,55 @@ The implementation maintains the invariant that the first and last pointers are 
 | Push Back  | O(1) |
 | Pop Back   | O(1) |
 | Peek Back  | O(1) |
+
+## Stack
+
+A dynamically resizing integer stack backed by a contiguous array, providing LIFO storage with automatic capacity growth.
+
+### Features
+
+- LIFO push, pop, and peek operations
+- Dynamically resizing array-backed storage
+- Automatic capacity doubling
+- Amortized constant-time push
+- Opaque `Stack` type
+- Explicit error handling through `StackStatus`
+- Capacity overflow protection
+
+### Example
+
+```c
+Stack* stack = NULL;
+createStack(&stack);
+
+pushStack(stack, 10);
+pushStack(stack, 20);
+pushStack(stack, 30);
+
+int value;
+
+if (peekStack(stack, &value) == STACK_SUCCESS) {
+    printf("%d\n", value);
+}
+
+popStack(stack);
+destroyStack(&stack);
+```
+
+Peek copies the top integer into a caller-provided output variable without removing it or exposing the stack's internal storage.
+
+### Implementation
+
+The stack stores integers in a contiguous dynamically allocated array. When the array reaches capacity, its capacity is doubled and the existing allocation is resized using `realloc()`.
+
+The stack tracks the next available position in the array, allowing push, pop, and peek operations without searching or shifting elements.
+
+### Complexity
+
+| Operation | Average | Worst Case |
+|-----------|---------|------------|
+| Push      | O(1)*   | O(n)       |
+| Pop       | O(1)    | O(1)       |
+| Peek      | O(1)    | O(1)       |
+
+Push is amortized O(1). An individual push that triggers a resize requires O(n) work to resize and preserve the existing elements.
