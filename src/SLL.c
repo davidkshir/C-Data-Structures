@@ -10,7 +10,7 @@ struct SinglyLinkedList {
     Node* first_node;
 };
 
-SLLStatus createList(SinglyLinkedList** list){
+SLLStatus createSLL(SinglyLinkedList** list){
     if (list == NULL){
         return SLL_INVALID_ARGUMENT;
     }
@@ -29,7 +29,7 @@ SLLStatus createList(SinglyLinkedList** list){
     return SLL_SUCCESS;
 }
 
-SLLStatus destroyList(SinglyLinkedList** list){
+SLLStatus destroySLL(SinglyLinkedList** list){
     if (list == NULL || *list == NULL) {
         return SLL_INVALID_ARGUMENT;
     }
@@ -48,7 +48,7 @@ SLLStatus destroyList(SinglyLinkedList** list){
     return SLL_SUCCESS;
 }
 
-SLLStatus pushFront(SinglyLinkedList* list, const int data) {
+SLLStatus pushFrontSLL(SinglyLinkedList* list, const int data) {
     if (list == NULL) {
         return SLL_INVALID_ARGUMENT;
     }
@@ -66,7 +66,7 @@ SLLStatus pushFront(SinglyLinkedList* list, const int data) {
     return SLL_SUCCESS;
 }
 
-SLLStatus popFront(SinglyLinkedList* list) {
+SLLStatus popFrontSLL(SinglyLinkedList* list) {
     if (list == NULL) {
         return SLL_INVALID_ARGUMENT;
     }
@@ -80,7 +80,7 @@ SLLStatus popFront(SinglyLinkedList* list) {
     return SLL_SUCCESS;
 }
 
-SLLStatus pushBack(SinglyLinkedList* list, const int data) {
+SLLStatus pushBackSLL(SinglyLinkedList* list, const int data) {
     if (list == NULL) {
         return SLL_INVALID_ARGUMENT;
     }
@@ -108,7 +108,7 @@ SLLStatus pushBack(SinglyLinkedList* list, const int data) {
     return SLL_SUCCESS;
 }
 
-SLLStatus popBack(SinglyLinkedList* list) {
+SLLStatus popBackSLL(SinglyLinkedList* list) {
     if (list == NULL) {
         return SLL_INVALID_ARGUMENT;
     }
@@ -137,7 +137,7 @@ SLLStatus popBack(SinglyLinkedList* list) {
     return SLL_SUCCESS;
 }
 
-SLLStatus peekFront(const SinglyLinkedList* list, int* output) {
+SLLStatus peekFrontSLL(const SinglyLinkedList* list, int* output) {
     if (list == NULL) {
         return SLL_INVALID_ARGUMENT;
     }
@@ -153,7 +153,7 @@ SLLStatus peekFront(const SinglyLinkedList* list, int* output) {
     return SLL_SUCCESS;
 }
 
-SLLStatus peekBack(const SinglyLinkedList* list, int* output) {
+SLLStatus peekBackSLL(const SinglyLinkedList* list, int* output) {
     if (list == NULL) {
         return SLL_INVALID_ARGUMENT;
     }

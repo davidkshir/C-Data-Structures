@@ -119,11 +119,11 @@ the list to locate its final node.
 
 ### Complexity
 
-| Operation | Time |
-|-----------|------|
+| Operation  | Time |
+|------------|------|
 | Push Front | O(1) |
-| Pop Front | O(1) |
+| Pop Front  | O(1) |
 | Peek Front | O(1) |
-| Push Back | O(n) |
-| Pop Back | O(n) |
-| Peek Back | O(n) |
+| Push Back  | O(n) |
+| Pop Back   | O(n) |
+| Peek Back  | O(n) |
