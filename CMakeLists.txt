@@ -7,6 +7,7 @@ add_executable(DataStructures
         src/HashTable.c
         src/SLL.c
         src/DLL.c
+        src/Stack.c
 )
 
 include_directories(C-Data-Structures PUBLIC include)
