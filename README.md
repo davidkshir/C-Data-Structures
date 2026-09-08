@@ -127,3 +127,55 @@ the list to locate its final node.
 | Push Back  | O(n) |
 | Pop Back   | O(n) |
 | Peek Back  | O(n) |
+
+## Doubly Linked List
+
+An integer doubly linked list that maintains pointers to both ends of the list, with an opaque public interface and privately managed nodes.
+
+### Features
+
+- Front and back insertion
+- Front and back removal
+- Front and back peek operations
+- Private node implementation
+- Explicit error handling through `DLLStatus`
+- Internal endpoint consistency checks
+
+### Example
+
+```c
+DoublyLinkedList* list = NULL;
+createDLL(&list);
+
+pushBackDLL(list, 10);
+pushBackDLL(list, 20);
+pushFrontDLL(list, 5);
+
+int value;
+
+if (peekFrontDLL(list, &value) == DLL_SUCCESS) {
+    printf("%d\n", value);
+}
+
+popBackDLL(list);
+destroyDLL(&list);
+```
+
+Peek operations copy the stored integer into a caller-provided output variable rather than exposing internal node memory.
+
+### Implementation
+
+Each node stores an integer and pointers to both the next and previous nodes. The list maintains pointers to its first and last nodes, allowing operations at either end without traversing the list.
+
+The implementation maintains the invariant that the first and last pointers are either both valid or both `NULL`, allowing inconsistent endpoint states to be detected.
+
+### Complexity
+
+| Operation  | Time |
+|------------|------|
+| Push Front | O(1) |
+| Pop Front  | O(1) |
+| Peek Front | O(1) |
+| Push Back  | O(1) |
+| Pop Back   | O(1) |
+| Peek Back  | O(1) |
