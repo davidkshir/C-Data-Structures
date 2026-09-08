@@ -3,13 +3,12 @@ project(C_Data_Structures C)
 
 set(CMAKE_C_STANDARD 17)
 
-add_executable(DataStructures
+add_library(DataStructures
         src/HashTable.c
         src/SLL.c
         src/DLL.c
         src/Stack.c
-        src/DyanmicArray.c
-        include/DynamicArray.h
+        src/DynamicArray.c
 )
 
-include_directories(C-Data-Structures PUBLIC include)
+target_include_directories(DataStructures PUBLIC include)
