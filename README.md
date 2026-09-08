@@ -231,3 +231,55 @@ The stack tracks the next available position in the array, allowing push, pop, a
 | Peek      | O(1)    | O(1)       |
 
 Push is amortized O(1). An individual push that triggers a resize requires O(n) work to resize and preserve the existing elements.
+## Dynamic Array
+
+A dynamically resizing integer array with indexed access and constant-time unordered removal.
+
+### Features
+
+- Dynamic integer storage
+- Indexed element access
+- Automatic capacity doubling
+- Amortized constant-time insertion
+- Constant-time unordered removal
+- Opaque `DynamicArray` type
+- Explicit error handling through `DynamicArrayStatus`
+- Capacity overflow protection
+
+### Example
+
+```c
+DynamicArray* array = NULL;
+createDynamicArray(&array);
+
+addDynamicArray(array, 10);
+addDynamicArray(array, 20);
+addDynamicArray(array, 30);
+
+int value;
+
+if (getDynamicArray(array, 1, &value) == DYNAMIC_ARRAY_SUCCESS) {
+    printf("%d\n", value);
+}
+
+removeDynamicArray(array, 1);
+destroyDynamicArray(&array);
+```
+
+Element access copies the integer at the requested index into a caller-provided output variable without exposing the array's internal storage.
+
+### Implementation
+
+The array stores integers in a contiguous dynamically allocated block of memory. When the array reaches capacity, its capacity is doubled using `realloc()` while preserving the existing elements.
+
+Removal does not preserve element order. Instead of shifting subsequent elements, the final element is moved into the removed element's position, allowing removal by index in constant time.
+
+### Complexity
+
+| Operation | Average | Worst Case |
+|-----------|---------|------------|
+| Add       | O(1)*   | O(n)       |
+| Get       | O(1)    | O(1)       |
+| Remove    | O(1)    | O(1)       |
+
+Addition is amortized O(1). An individual addition that triggers a resize requires O(n) work to resize and preserve the existing elements.
